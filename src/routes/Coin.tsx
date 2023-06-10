@@ -10,7 +10,13 @@ import {
 import { styled } from "styled-components";
 import Price from "./Price";
 import Chart from "./Chart";
-
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from "react-query";
 const Container = styled.div`
   padding: 0px 20px;
   max-width: 480px;
