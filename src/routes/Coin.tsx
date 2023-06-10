@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { Switch, Route, useLocation, useParams } from "react-router-dom";
 import { styled } from "styled-components";
+import Price from "./Price";
+import Chart from "./Chart";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -13,7 +15,8 @@ const Header = styled.header`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 15px;
+  margin: 20px;
+  margin-bottom: 30px;
 `;
 
 const Title = styled.h1`
@@ -28,6 +31,38 @@ const Loader = styled.h1`
   padding: 30px 20px;
   margin: 20px 20px;
   text-align: center;
+`;
+
+const Overview = styled.div`
+  display: flex;
+  justify-content: space-between;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px 20px;
+  border-radius: 10px;
+`;
+
+const OverviewItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  span {
+    color: ${(props) => props.theme.accentColor};
+    font-size: 9px;
+    font-weight: 400;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+
+  p {
+    font-size: 13px;
+    color: ${(props) => props.theme.accentColor};
+  }
+`;
+
+const Description = styled.p`
+  color: ${(props) => props.theme.accentColor};
+  margin: 20px 0px;
 `;
 
 interface RouteParams {
@@ -100,6 +135,7 @@ const Coin = () => {
   const { state } = useLocation<RouteState>();
   const [info, setInfo] = useState<InfoData>();
   const [priceInfo, setPriceInfo] = useState<PriceData>();
+
   useEffect(() => {
     (async () => {
       const infoData = await (
@@ -111,15 +147,56 @@ const Coin = () => {
       ).json();
 
       setInfo(infoData);
-      setPriceInfo(priceInfo);
+      setPriceInfo(priceData);
+      setLoading(false);
     })();
-  }, []);
+  }, [coinId]);
   return (
     <Container>
       <Header>
-        <Title>{state?.name || "Dose not right acess 404"}</Title>
+        <Title>
+          {state?.name ? state.name : loading ? "Loading..." : info?.name}
+        </Title>
       </Header>
-      {loading ? <Loader>Please wait...</Loader> : null}
+      {loading ? (
+        <Loader>Please wait...</Loader>
+      ) : (
+        <>
+          <Overview>
+            <OverviewItem>
+              <span>Rank:</span>
+              <p>{info?.rank}</p>
+            </OverviewItem>
+            <OverviewItem>
+              <span>Symbol:</span>
+              <p>${info?.symbol}</p>
+            </OverviewItem>
+            <OverviewItem>
+              <span>Open Source:</span>
+              <p>{info?.open_source ? "Yes" : "No"}</p>
+            </OverviewItem>
+          </Overview>
+          <Description>{info?.description}</Description>
+          <Overview>
+            <OverviewItem>
+              <span>Total Suply:</span>
+              <p>{priceInfo?.total_supply}</p>
+            </OverviewItem>
+            <OverviewItem>
+              <span>Max Supply:</span>
+              <p>{priceInfo?.max_supply}</p>
+            </OverviewItem>
+          </Overview>
+          <Switch>
+            <Route path={`/${coinId}/price`}>
+              <Price />
+            </Route>
+            <Route path={`/${coinId}/chart`}>
+              <Chart />
+            </Route>
+          </Switch>
+        </>
+      )}
     </Container>
   );
 };
