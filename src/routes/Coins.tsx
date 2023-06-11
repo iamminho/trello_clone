@@ -73,7 +73,6 @@ interface ICoin {
 
 const Coins = () => {
   const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins);
-  console.log(isLoading, data);
   // const [coins, setCoins] = useState<ICoin[]>([]);
   // const [loading, setLoading] = useState(true);
   // useEffect(() => {

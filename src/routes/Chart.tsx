@@ -66,8 +66,11 @@ function Chart({ coinId }: ChartProps) {
               show: false,
             },
             xaxis: {
-              axisTicks: {
-                show: false,
+              axisTicks: { show: false },
+            },
+            tooltip: {
+              y: {
+                formatter: (value) => `$ ${value.toFixed(3)}`,
               },
             },
           }}
