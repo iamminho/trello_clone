@@ -170,13 +170,12 @@ const Coin = () => {
     ["info", coinId],
     () => fetchCoinInfo(coinId)
   );
+
   const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
     ["tickers", coinId],
-    () => fetchCoinTickers(coinId),
-    {
-      refetchInterval: 5000, // 5초마다 api 업데이트 그러나 받아오는 api에서 업데이트가 되지 않아 변경은 되지 않는다.
-    }
+    () => fetchCoinTickers(coinId)
   );
+
   // const [loading, setLoading] = useState(true);
   // const [info, setInfo] = useState<InfoData>();
   // const [priceInfo, setPriceInfo] = useState<PriceData>();
