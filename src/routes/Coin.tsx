@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import {
   Switch,
   Route,
@@ -171,7 +172,10 @@ const Coin = () => {
   );
   const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
     ["tickers", coinId],
-    () => fetchCoinTickers(coinId)
+    () => fetchCoinTickers(coinId),
+    {
+      refetchInterval: 5000, // 5초마다 api 업데이트 그러나 받아오는 api에서 업데이트가 되지 않아 변경은 되지 않는다.
+    }
   );
   // const [loading, setLoading] = useState(true);
   // const [info, setInfo] = useState<InfoData>();
@@ -194,6 +198,11 @@ const Coin = () => {
   const loading = infoLoading || tickersLoading;
   return (
     <Container>
+      <Helmet>
+        <title>
+          {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
+        </title>
+      </Helmet>
       <Header>
         <Title>
           {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
@@ -213,8 +222,8 @@ const Coin = () => {
               <p>${infoData?.symbol}</p>
             </OverviewItem>
             <OverviewItem>
-              <span>Open Source:</span>
-              <p>{infoData?.open_source ? "Yes" : "No"}</p>
+              <span>Price</span>
+              <p>{tickersData?.quotes.USD.price.toFixed(2)} $</p>
             </OverviewItem>
           </Overview>
           <Description>{infoData?.description}</Description>
