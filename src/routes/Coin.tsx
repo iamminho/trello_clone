@@ -97,6 +97,14 @@ const Tab = styled.span<{ isActive: boolean }>`
   }
 `;
 
+const HomeBtn = styled.button`
+  display: block;
+  color: ${(props) => props.theme.textColor};
+  background-color: transparent;
+  border: none;
+  margin: 10px 5px;
+`;
+
 interface RouteParams {
   coinId: string;
 }
@@ -176,24 +184,6 @@ const Coin = () => {
     () => fetchCoinTickers(coinId)
   );
 
-  // const [loading, setLoading] = useState(true);
-  // const [info, setInfo] = useState<InfoData>();
-  // const [priceInfo, setPriceInfo] = useState<PriceData>();
-  // useEffect(() => {
-  //   (async () => {
-  //     const infoData = await (
-  //       await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
-  //     ).json();
-
-  //     const priceData = await (
-  //       await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
-  //     ).json();
-
-  //     setInfo(infoData);
-  //     setPriceInfo(priceData);
-  //     setLoading(false);
-  //   })();
-  // }, [coinId]);
   const loading = infoLoading || tickersLoading;
   return (
     <Container>
@@ -202,6 +192,10 @@ const Coin = () => {
           {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
         </title>
       </Helmet>
+
+      <HomeBtn>
+        <Link to="/">Home</Link>
+      </HomeBtn>
       <Header>
         <Title>
           {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
@@ -218,7 +212,7 @@ const Coin = () => {
             </OverviewItem>
             <OverviewItem>
               <span>Symbol:</span>
-              <p>${infoData?.symbol}</p>
+              <p>{infoData?.symbol}</p>
             </OverviewItem>
             <OverviewItem>
               <span>Price</span>
@@ -248,7 +242,7 @@ const Coin = () => {
 
           <Switch>
             <Route path={`/:coinId/price`}>
-              <Price />
+              <Price coinId={coinId} />
             </Route>
             <Route path={`/:coinId/chart`}>
               <Chart coinId={coinId} />

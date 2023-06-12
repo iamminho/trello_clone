@@ -26,20 +26,12 @@ function Chart({ coinId }: ChartProps) {
     <div>
       {isLoading ? (
         "Loding chart..."
-      ) : (
+      ) : data?.length !== undefined ? (
         <ApexChart
           type="line"
           series={[
             {
-              name: "open",
-              data: data?.map((price) => Number(price.open)) as number[],
-            },
-            {
               name: "high",
-              data: data?.map((price) => Number(price.high)) as number[],
-            },
-            {
-              name: "close",
               data: data?.map((price) => Number(price.close)) as number[],
             },
           ]}
@@ -51,30 +43,59 @@ function Chart({ coinId }: ChartProps) {
               height: 500,
               width: 500,
               toolbar: {
-                show: false,
+                tools: {},
               },
               background: "transparent",
             },
-            grid: {
-              show: true,
-            },
             stroke: {
               curve: "smooth",
-              width: 2,
+              width: 4,
+            },
+            fill: {
+              type: "gradient",
+              gradient: {
+                gradientToColors: ["#F2CD5C", "#F2921D", "#A61F69", "#400E32"],
+                stops: [0, 100],
+              },
+            },
+            grid: {
+              show: false,
+            },
+            plotOptions: {
+              candlestick: {
+                wick: {
+                  useFillColor: true,
+                },
+              },
+            },
+            xaxis: {
+              labels: {
+                show: false,
+                datetimeFormatter: {
+                  month: "mmm 'yy",
+                },
+              },
+              type: "datetime",
+              categories: data?.map((date) => date.time_close),
+              axisBorder: {
+                show: false,
+              },
+              axisTicks: {
+                show: false,
+              },
             },
             yaxis: {
               show: false,
             },
-            xaxis: {
-              axisTicks: { show: false },
-            },
             tooltip: {
               y: {
-                formatter: (value) => `$ ${value.toFixed(3)}`,
+                formatter: (v) => `$ ${v.toFixed(2)}`,
               },
             },
           }}
         />
+      ) : (
+        <h1>No Data</h1>
       )}
     </div>
   );
