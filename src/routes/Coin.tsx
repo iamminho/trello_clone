@@ -12,7 +12,7 @@ import { styled } from "styled-components";
 import Price from "./Price";
 import Chart from "./Chart";
 import { useQuery } from "react-query";
-import { fetchCoinInfo, fetchCoinTickers } from "../api";
+import { fetchCoinInfo, fetchCoinTickers, upbitCoinTickers } from "../api";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -49,6 +49,7 @@ const Overview = styled.div`
   background-color: rgba(0, 0, 0, 0.5);
   padding: 10px 20px;
   border-radius: 10px;
+  margin-bottom: 20px;
 `;
 
 const OverviewItem = styled.div`
@@ -113,60 +114,33 @@ interface RouteState {
   name: string;
 }
 
-interface InfoData {
-  id: string;
-  name: string;
-  symbol: string;
-  rank: number;
-  is_new: boolean;
-  is_active: boolean;
-  type: string;
-  logo: string;
-  description: string;
-  message: string;
-  open_source: boolean;
-  started_at: string;
-  development_s: string;
-  hardware_wall: boolean;
-  proof_type: string;
-  org_structure: string;
-  hash_algorith: string;
-  first_data_at: string;
-  last_data_at: string;
-}
-
-interface PriceData {
-  id: string;
-  name: string;
-  symbol: string;
-  rank: number;
-  circulating_supply: number;
-  total_supply: number;
-  max_supply: number;
-  beta_value: number;
-  first_data_at: string;
-  last_updated: string;
-  quotes: {
-    USD: {
-      ath_date: string;
-      ath_price: number;
-      market_cap: number;
-      market_cap_change_24h: number;
-      percent_change_1h: number;
-      percent_change_1y: number;
-      percent_change_6h: number;
-      percent_change_7d: number;
-      percent_change_12h: number;
-      percent_change_15m: number;
-      percent_change_24h: number;
-      percent_change_30d: number;
-      percent_change_30m: number;
-      percent_from_price_ath: number;
-      price: number;
-      volume_24h: number;
-      volume_24h_change_24h: number;
-    };
-  };
+interface IUpbitTickerData {
+  market: string;
+  trade_date: string;
+  trade_time: string;
+  trade_date_kst: string;
+  trade_time_kst: string;
+  trade_timestamp: number;
+  opening_price: number;
+  high_price: number;
+  low_price: number;
+  trade_price: number;
+  prev_closing_price: number;
+  change: string;
+  change_price: number;
+  change_rate: number;
+  signed_change_price: number;
+  signed_change_rate: number;
+  trade_volume: number;
+  acc_trade_price: number;
+  acc_trade_price_24h: number;
+  acc_trade_volume: number;
+  acc_trade_volume_24h: number;
+  highest_52_week_price: number;
+  highest_52_week_date: string;
+  lowest_52_week_price: number;
+  lowest_52_week_date: string;
+  timestamp: number;
 }
 
 const Coin = () => {
@@ -174,60 +148,96 @@ const Coin = () => {
   const { state } = useLocation<RouteState>();
   const priceMatch = useRouteMatch("/:coinId/price");
   const chartMatch = useRouteMatch("/:coinId/chart");
-  const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(
-    ["info", coinId],
-    () => fetchCoinInfo(coinId)
+
+  const { isLoading, data } = useQuery(["upbitTickers", coinId], () =>
+    upbitCoinTickers(coinId)
   );
 
-  const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
-    ["tickers", coinId],
-    () => fetchCoinTickers(coinId)
-  );
+  const coinData =
+    !isLoading && data ? (data[0] as IUpbitTickerData) : undefined;
 
-  const loading = infoLoading || tickersLoading;
+  const loading = isLoading;
   return (
     <Container>
       <Helmet>
-        <title>
-          {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
-        </title>
+        <title>{state?.name ? state.name : coinId}</title>
       </Helmet>
 
       <HomeBtn>
         <Link to="/">Home</Link>
       </HomeBtn>
       <Header>
-        <Title>
-          {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
-        </Title>
+        <Title>{state?.name ? state.name : coinId}</Title>
       </Header>
+
       {loading ? (
         <Loader>Please wait...</Loader>
       ) : (
         <>
           <Overview>
             <OverviewItem>
-              <span>Rank:</span>
-              <p>{infoData?.rank}</p>
+              <span>Acc trade price</span>
+              <p>{coinData?.acc_trade_price.toFixed(2)}</p>
             </OverviewItem>
             <OverviewItem>
-              <span>Symbol:</span>
-              <p>{infoData?.symbol}</p>
-            </OverviewItem>
-            <OverviewItem>
-              <span>Price</span>
-              <p>{tickersData?.quotes.USD.price.toFixed(2)} $</p>
+              <span>Acc trade price 24h</span>
+              <p>{coinData?.acc_trade_price_24h.toFixed(2)}</p>
             </OverviewItem>
           </Overview>
-          <Description>{infoData?.description}</Description>
+
           <Overview>
             <OverviewItem>
-              <span>Total Suply:</span>
-              <p>{tickersData?.total_supply}</p>
+              <span>Acc trade volume</span>
+              <p>{coinData?.acc_trade_volume.toFixed(2)}</p>
             </OverviewItem>
             <OverviewItem>
-              <span>Max Supply:</span>
-              <p>{tickersData?.max_supply}</p>
+              <span>Acc trade volume 24h</span>
+              <p>{coinData?.acc_trade_volume_24h.toFixed(2)}</p>
+            </OverviewItem>
+          </Overview>
+
+          <Overview>
+            <OverviewItem>
+              <span>change</span>
+              <p>{coinData?.change}</p>
+            </OverviewItem>
+            <OverviewItem>
+              <span>change price</span>
+              <p>{coinData?.change_price.toFixed(2)}</p>
+            </OverviewItem>
+            <OverviewItem>
+              <span>change rate</span>
+              <p>{coinData?.change_rate.toFixed(2)}</p>
+            </OverviewItem>
+          </Overview>
+
+          <Overview>
+            <OverviewItem>
+              <span>High price</span>
+              <p>{coinData?.high_price}</p>
+            </OverviewItem>
+            <OverviewItem>
+              <span>Highest 52 week date</span>
+              <p>{coinData?.highest_52_week_date}</p>
+            </OverviewItem>
+            <OverviewItem>
+              <span>Highest 52 week price</span>
+              <p>{coinData?.highest_52_week_price.toFixed(2)}</p>
+            </OverviewItem>
+          </Overview>
+
+          <Overview>
+            <OverviewItem>
+              <span>low price</span>
+              <p>{coinData?.low_price}</p>
+            </OverviewItem>
+            <OverviewItem>
+              <span>lowest 52 week date</span>
+              <p>{coinData?.lowest_52_week_date}</p>
+            </OverviewItem>
+            <OverviewItem>
+              <span>lowest 52 week price</span>
+              <p>{coinData?.lowest_52_week_price.toFixed(2)}</p>
             </OverviewItem>
           </Overview>
 

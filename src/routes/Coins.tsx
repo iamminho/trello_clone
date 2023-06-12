@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 //import { Interface } from "readline";
 import { styled } from "styled-components";
-import { fetchCoins } from "../api";
+import { fetchCoins, upbitCoins } from "../api";
 import { Helmet } from "react-helmet";
 
 const Container = styled.div`
@@ -64,27 +64,13 @@ const Img = styled.img`
 `;
 
 interface ICoin {
-  id: string;
-  name: string;
-  symbol: string;
-  rank: number;
-  is_new: boolean;
-  is_active: boolean;
-  type: string;
+  english_name: string;
+  korean_name: string;
+  market: string;
 }
 
 const Coins = () => {
-  const { isLoading, data } = useQuery("allCoins", fetchCoins);
-  // const [coins, setCoins] = useState<ICoin[]>([]);
-  // const [loading, setLoading] = useState(true);
-  // useEffect(() => {
-  //   (async () => {
-  //     const response = await fetch("https://api.coinpaprika.com/v1/coins");
-  //     const json = await response.json();
-  //     setCoins(json.slice(0, 100));
-  //     setLoading(false);
-  //   })();
-  // }, []);
+  const { isLoading, data } = useQuery("allCoins", upbitCoins);
 
   return (
     <div>
@@ -100,17 +86,17 @@ const Coins = () => {
         ) : (
           <CoinsList>
             {data?.slice(0, 50).map((coin: ICoin) => (
-              <Coin key={coin.id}>
+              <Coin key={coin.market}>
                 <Link
                   to={{
-                    pathname: `/${coin.id}`,
-                    state: { name: coin.name },
+                    pathname: `/${coin.market}`,
+                    state: { name: coin.english_name },
                   }}
                 >
-                  <Img
+                  {/* <Img
                     src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
-                  />
-                  {coin.name} &rarr;
+                  /> */}
+                  {coin.english_name} &rarr;
                 </Link>
               </Coin>
             ))}

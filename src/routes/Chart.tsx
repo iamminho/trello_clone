@@ -1,16 +1,19 @@
 import { useQuery } from "react-query";
-import { fetchCoinHistory } from "../api";
+import { upbitCandle } from "../api";
 import ApexChart from "react-apexcharts";
 
 interface IHistorical {
-  time_open: number;
-  time_close: number;
-  open: string;
-  high: string;
-  low: string;
-  close: string;
-  volume: string;
-  market_cap: number;
+  candle_acc_trade_price: number;
+  candle_acc_trade_volume: number;
+  candle_date_time_kst: string;
+  candle_date_time_utc: string;
+  high_price: number;
+  low_price: number;
+  market: string;
+  opening_price: number;
+  timestamp: number;
+  trade_price: number;
+  unit: number;
 }
 
 interface ChartProps {
@@ -18,8 +21,11 @@ interface ChartProps {
 }
 
 function Chart({ coinId }: ChartProps) {
-  const { isLoading, data } = useQuery<IHistorical[]>(["ohlcv", coinId], () =>
-    fetchCoinHistory(coinId)
+  const minute = 30;
+  const count = 10;
+
+  const { isLoading, data } = useQuery<IHistorical[]>(["candle", coinId], () =>
+    upbitCandle(coinId, minute, count)
   );
 
   return (
@@ -31,67 +37,30 @@ function Chart({ coinId }: ChartProps) {
           type="line"
           series={[
             {
-              name: "high",
-              data: data?.map((price) => Number(price.close)) as number[],
+              name: "price",
+              data: data?.map((obj) => obj.trade_price),
             },
           ]}
           options={{
-            theme: {
-              mode: "dark",
-            },
+            theme: { mode: "dark" },
             chart: {
               height: 500,
               width: 500,
-              toolbar: {
-                tools: {},
-              },
+              toolbar: { show: false },
               background: "transparent",
             },
-            stroke: {
-              curve: "smooth",
-              width: 4,
+            title: {
+              text: "Price chart",
+              align: "left",
             },
+            stroke: { curve: "smooth", width: 4 },
+            grid: { show: false },
+            yaxis: { show: false },
             fill: {
               type: "gradient",
-              gradient: {
-                gradientToColors: ["#F2CD5C", "#F2921D", "#A61F69", "#400E32"],
-                stops: [0, 100],
-              },
+              gradient: { gradientToColors: ["blue"], stops: [0, 100] },
             },
-            grid: {
-              show: false,
-            },
-            plotOptions: {
-              candlestick: {
-                wick: {
-                  useFillColor: true,
-                },
-              },
-            },
-            xaxis: {
-              labels: {
-                show: false,
-                datetimeFormatter: {
-                  month: "mmm 'yy",
-                },
-              },
-              type: "datetime",
-              categories: data?.map((date) => date.time_close),
-              axisBorder: {
-                show: false,
-              },
-              axisTicks: {
-                show: false,
-              },
-            },
-            yaxis: {
-              show: false,
-            },
-            tooltip: {
-              y: {
-                formatter: (v) => `$ ${v.toFixed(2)}`,
-              },
-            },
+            colors: ["red"],
           }}
         />
       ) : (
