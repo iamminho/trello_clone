@@ -1,16 +1,19 @@
 import { useQuery } from "react-query";
-import { fetchCoinHistory } from "../api";
+import { upbitCandle } from "../api";
 import ApexChart from "react-apexcharts";
 
 interface IHistorical {
-  time_open: number;
-  time_close: number;
-  open: string;
-  high: string;
-  low: string;
-  close: string;
-  volume: string;
-  market_cap: number;
+  candle_acc_trade_price: number;
+  candle_acc_trade_volume: number;
+  candle_date_time_kst: string;
+  candle_date_time_utc: string;
+  high_price: number;
+  low_price: number;
+  market: string;
+  opening_price: number;
+  timestamp: number;
+  trade_price: number;
+  unit: number;
 }
 
 interface PriceProps {
@@ -18,8 +21,11 @@ interface PriceProps {
 }
 
 function Price({ coinId }: PriceProps) {
-  const { isLoading, data } = useQuery<IHistorical[]>(["price", coinId], () =>
-    fetchCoinHistory(coinId)
+  const minute = 60;
+  const count = 15;
+
+  const { isLoading, data } = useQuery<IHistorical[]>(["candle", coinId], () =>
+    upbitCandle(coinId, minute, count)
   );
 
   return (
@@ -31,10 +37,21 @@ function Price({ coinId }: PriceProps) {
           type="candlestick"
           series={[
             {
-              data: data?.map((price) => ({
-                x: price.time_close,
-                y: [price.open, price.high, price.low, price.close],
-              })),
+              data: data
+                ?.sort(
+                  (a, b) =>
+                    Number(new Date(a.candle_date_time_kst)) -
+                    Number(new Date(b.candle_date_time_kst))
+                )
+                .map((price) => ({
+                  x: price.candle_date_time_utc,
+                  y: [
+                    price.opening_price,
+                    price.high_price,
+                    price.low_price,
+                    price.trade_price,
+                  ],
+                })),
             },
           ]}
           options={{
@@ -65,12 +82,9 @@ function Price({ coinId }: PriceProps) {
             xaxis: {
               labels: {
                 show: false,
-                datetimeFormatter: {
-                  month: "mmm 'yy",
-                },
               },
-              type: "datetime",
-              categories: data?.map((date) => date.time_close),
+              type: "category",
+              categories: data?.map((date) => date.candle_date_time_utc),
               axisBorder: {
                 show: false,
               },

@@ -21,12 +21,13 @@ interface ChartProps {
 }
 
 function Chart({ coinId }: ChartProps) {
-  const minute = 30;
-  const count = 10;
+  const minute = 60;
+  const count = 15;
 
   const { isLoading, data } = useQuery<IHistorical[]>(["candle", coinId], () =>
     upbitCandle(coinId, minute, count)
   );
+  console.log(data);
 
   return (
     <div>
@@ -38,7 +39,13 @@ function Chart({ coinId }: ChartProps) {
           series={[
             {
               name: "price",
-              data: data?.map((obj) => obj.trade_price),
+              data: data
+                ?.sort(
+                  (a, b) =>
+                    Number(new Date(a.candle_date_time_kst)) -
+                    Number(new Date(b.candle_date_time_kst))
+                )
+                .map((obj) => obj.trade_price),
             },
           ]}
           options={{
@@ -59,7 +66,7 @@ function Chart({ coinId }: ChartProps) {
               labels: { show: false },
               axisTicks: { show: false },
               axisBorder: { show: false },
-              type: "datetime",
+              type: "category",
               categories: data?.map((obj) => obj.candle_date_time_kst),
             },
             yaxis: { show: false },
