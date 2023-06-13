@@ -66,6 +66,10 @@ interface ICoin {
   market: string;
 }
 
+interface ICoinsProps {
+  toggleDark: () => void;
+}
+
 const Coins = () => {
   const { isLoading, data } = useQuery("allCoins", upbitCoins);
 
@@ -77,6 +81,7 @@ const Coins = () => {
         </Helmet>
         <Header>
           <Title>Coins</Title>
+          <button>Toggle Mode</button>
         </Header>
         {isLoading ? (
           <Loader>Please wait</Loader>

@@ -1,6 +1,8 @@
 import { useQuery } from "react-query";
 import { upbitCandle } from "../api";
 import ApexChart from "react-apexcharts";
+import { useRecoilValue } from "recoil";
+import { isDarkAtom } from "./atom";
 
 interface IHistorical {
   candle_acc_trade_price: number;
@@ -26,10 +28,11 @@ interface ChartProps {
 function Chart({ coinId }: ChartProps) {
   const minute = 60;
   const count = 15;
-
   const { isLoading, data } = useQuery<IHistorical[]>(["candle", coinId], () =>
     upbitCandle(coinId, minute, count)
   );
+
+  const isDark = useRecoilValue(isDarkAtom);
 
   return (
     <div>
@@ -51,7 +54,7 @@ function Chart({ coinId }: ChartProps) {
             },
           ]}
           options={{
-            theme: { mode: "dark" },
+            theme: { mode: isDark ? "dark" : "light" },
             chart: {
               height: 500,
               width: 500,
