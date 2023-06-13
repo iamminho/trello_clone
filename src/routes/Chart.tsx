@@ -50,17 +50,29 @@ function Chart({ coinId }: ChartProps) {
               background: "transparent",
             },
             title: {
-              text: "Price chart",
+              text: "Trade price chart",
               align: "left",
             },
             stroke: { curve: "smooth", width: 4 },
             grid: { show: false },
+            xaxis: {
+              labels: { show: false },
+              axisTicks: { show: false },
+              axisBorder: { show: false },
+              type: "datetime",
+              categories: data?.map((obj) => obj.candle_date_time_kst),
+            },
             yaxis: { show: false },
             fill: {
               type: "gradient",
               gradient: { gradientToColors: ["blue"], stops: [0, 100] },
             },
             colors: ["red"],
+            tooltip: {
+              y: {
+                formatter: (value) => `$ ${value.toFixed(2)}`,
+              },
+            },
           }}
         />
       ) : (
