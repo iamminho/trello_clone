@@ -1,9 +1,7 @@
-//import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
-//import { Interface } from "readline";
 import { styled } from "styled-components";
-import { fetchCoins, upbitCoins } from "../api";
+import { upbitCoins } from "../api";
 import { Helmet } from "react-helmet";
 
 const Container = styled.div`
@@ -26,11 +24,10 @@ const CoinsList = styled.ul`
 
 const Coin = styled.li`
   background-color: white;
-  color: ${(props) => props.theme.textColor};
+  color: ${(props) => props.theme.accentColor};
   border-radius: 15px;
   margin-bottom: 10px;
   a {
-    color: ${(props) => props.theme.selectColor};
     display: flex;
     align-items: center;
     padding: 20px;
@@ -45,7 +42,7 @@ const Coin = styled.li`
 
 const Title = styled.h1`
   font-size: 48px;
-  color: ${(props) => props.theme.accentColor};
+  color: ${(props) => props.theme.textColor};
   margin-top: 10px;
 `;
 

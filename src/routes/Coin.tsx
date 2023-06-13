@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import {
   Switch,
@@ -12,7 +11,7 @@ import { styled } from "styled-components";
 import Price from "./Price";
 import Chart from "./Chart";
 import { useQuery } from "react-query";
-import { fetchCoinInfo, fetchCoinTickers, upbitCoinTickers } from "../api";
+import { upbitCoinTickers } from "../api";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -31,7 +30,7 @@ const Header = styled.header`
 
 const Title = styled.h1`
   font-size: 48px;
-  color: ${(props) => props.theme.accentColor};
+  color: ${(props) => props.theme.textColor};
   margin-top: 10px;
 `;
 
@@ -58,7 +57,7 @@ const OverviewItem = styled.div`
   align-items: center;
 
   span {
-    color: ${(props) => props.theme.accentColor};
+    color: ${(props) => props.theme.textColor};
     font-size: 9px;
     font-weight: 400;
     text-transform: uppercase;
@@ -67,7 +66,7 @@ const OverviewItem = styled.div`
 
   p {
     font-size: 13px;
-    color: ${(props) => props.theme.accentColor};
+    color: ${(props) => props.theme.textColor};
   }
 `;
 
@@ -148,7 +147,6 @@ const Coin = () => {
   const { state } = useLocation<RouteState>();
   const priceMatch = useRouteMatch("/:coinId/price");
   const chartMatch = useRouteMatch("/:coinId/chart");
-  console.log(state);
 
   const { isLoading, data } = useQuery(["upbitTickers", coinId], () =>
     upbitCoinTickers(coinId)

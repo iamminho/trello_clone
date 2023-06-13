@@ -1,10 +1,15 @@
-import { DefaultTheme } from "styled-components/dist/types";
+import { ITheme } from "styled-components";
 
-export const theme: DefaultTheme = {
+export const darkTheme: ITheme = {
   bgColor: "#222f3e",
   textColor: "#c8d6e5",
-  accentColor: "#c8d6e5",
-  selectColor: "#8F7CEE",
+  accentColor: "#5B5B75",
 };
 
-export default theme;
+export const lightTheme: ITheme = {
+  bgColor: "whitesmoke",
+  textColor: "black",
+  accentColor: "#222f3e",
+};
+
+export default { darkTheme, lightTheme };
