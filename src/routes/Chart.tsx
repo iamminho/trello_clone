@@ -18,6 +18,9 @@ interface IHistorical {
 
 interface ChartProps {
   coinId: string;
+  // state: {
+  //   name: string;
+  // };
 }
 
 function Chart({ coinId }: ChartProps) {
@@ -27,7 +30,6 @@ function Chart({ coinId }: ChartProps) {
   const { isLoading, data } = useQuery<IHistorical[]>(["candle", coinId], () =>
     upbitCandle(coinId, minute, count)
   );
-  console.log(data);
 
   return (
     <div>

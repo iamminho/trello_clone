@@ -148,6 +148,7 @@ const Coin = () => {
   const { state } = useLocation<RouteState>();
   const priceMatch = useRouteMatch("/:coinId/price");
   const chartMatch = useRouteMatch("/:coinId/chart");
+  console.log(state);
 
   const { isLoading, data } = useQuery(["upbitTickers", coinId], () =>
     upbitCoinTickers(coinId)
@@ -160,14 +161,14 @@ const Coin = () => {
   return (
     <Container>
       <Helmet>
-        <title>{state?.name ? state.name : coinId}</title>
+        <title>{state?.name ? state.name : undefined}</title>
       </Helmet>
 
       <HomeBtn>
         <Link to="/">Home</Link>
       </HomeBtn>
       <Header>
-        <Title>{state?.name ? state.name : coinId}</Title>
+        <Title>{state?.name ? state.name : undefined}</Title>
       </Header>
 
       {loading ? (
@@ -243,10 +244,24 @@ const Coin = () => {
 
           <Tabs>
             <Tab isActive={chartMatch !== null}>
-              <Link to={`/${coinId}/chart`}>Chart</Link>
+              <Link
+                to={{
+                  pathname: `/${coinId}/chart`,
+                  state: { name: state.name },
+                }}
+              >
+                Chart
+              </Link>
             </Tab>
             <Tab isActive={priceMatch !== null}>
-              <Link to={`/${coinId}/price`}>Price</Link>
+              <Link
+                to={{
+                  pathname: `/${coinId}/price`,
+                  state: { name: state.name },
+                }}
+              >
+                Price
+              </Link>
             </Tab>
           </Tabs>
 
