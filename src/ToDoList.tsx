@@ -8,6 +8,7 @@ interface IForm {
   username: string;
   password: string;
   checkingPassword: string;
+  extraError?: string;
 }
 
 const TodoList = () => {
@@ -15,14 +16,22 @@ const TodoList = () => {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm<IForm>({
     defaultValues: {
       email: "@gamil.com",
     },
   });
 
-  const OnValid = (data: any) => {
-    //console.log(data);
+  const OnValid = (data: IForm) => {
+    if (data.password !== data.checkingPassword) {
+      setError(
+        "password",
+        { message: "Password are not the same." },
+        { shouldFocus: true }
+      );
+    }
+    setError("extraError", { message: "Server offline." });
   };
 
   console.log(errors);
@@ -48,10 +57,16 @@ const TodoList = () => {
         <input
           {...register("firstName", {
             required: "first name is required",
+            validate: {
+              noNico: (value) =>
+                value.includes("nico") ? "nico not allowed" : true,
+              noNick: (value) =>
+                value.includes("nick") ? "nick not allowed" : true,
+            },
           })}
           placeholder="First Name"
         />
-        <span>{errors?.lastName?.message}</span>
+        <span>{errors?.firstName?.message}</span>
 
         <input
           {...register("lastName", { required: "Last name is required" })}
@@ -82,11 +97,12 @@ const TodoList = () => {
           {...register("checkingPassword", {
             required: "Checking password is required",
           })}
-          placeholder="Re Password"
+          placeholder="checkingPasswordd"
         />
         <span>{errors?.checkingPassword?.message}</span>
 
         <button>Add</button>
+        <span>{errors?.extraError?.message}</span>
       </form>
     </div>
   );
