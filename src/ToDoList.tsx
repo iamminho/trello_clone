@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 const TodoList = () => {
   const { register, watch, handleSubmit, formState } = useForm();
   const OnValid = (data: any) => {
-    console.log(data);
+    //console.log(data);
   };
   console.log(formState.errors);
   return (
@@ -34,7 +34,7 @@ const TodoList = () => {
           placeholder="Password"
         />
         <input
-          {...register("Re_Password", { required: true })}
+          {...register("Re_Password", { required: "re-password is required" })}
           placeholder="Re Password"
         />
         <button>Add</button>
