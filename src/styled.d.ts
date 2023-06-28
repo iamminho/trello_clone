@@ -4,9 +4,8 @@ import "styled-components";
 // and extend them!
 declare module "styled-components" {
   export interface ITheme {
-    textColor: string;
     bgColor: string;
-    accentColor: string;
-    overViewColor: string;
+    cardColor: string;
+    boardColor: string;
   }
 }
