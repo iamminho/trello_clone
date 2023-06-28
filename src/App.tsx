@@ -1,5 +1,4 @@
 import { createGlobalStyle } from "styled-components";
-import TodoList from "./components/ToDoList";
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
@@ -67,8 +66,8 @@ a {
 function App() {
   return (
     <>
-      <GlobalStyle />
-      <TodoList />
+      <input type="number" placeholder="Minutes" />
+      <input type="number" placeholder="Hours" />
     </>
   );
 }
