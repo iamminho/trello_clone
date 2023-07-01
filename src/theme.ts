@@ -1,9 +1,9 @@
 import { ITheme } from "styled-components";
 
 export const darkTheme: ITheme = {
-  bgColor: "blue",
-  cardColor: "white",
-  boardColor: "gray",
+  bgColor: "#4A55A2",
+  cardColor: "#A0BFE0",
+  boardColor: "#7895CB",
 };
 
 // export const lightTheme: ITheme = {
